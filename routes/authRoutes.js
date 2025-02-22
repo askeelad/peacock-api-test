@@ -117,30 +117,32 @@ router.get("/refreshtoken", (req, res) => {
   }
 
   // Verify the refresh token
-  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
-    if (err) {
-      // console.log(err);
-      return res
-        .status(401)
-        .json({ message: "Invalid or expired refresh token" });
-    }
+  jwt.verify(
+    refreshToken,
+    process.env.REFRESH_TOKEN_SECRET,
+    async (err, decoded) => {
+      if (err) {
+        // console.log(err);
+        return res
+          .status(401)
+          .json({ message: "Invalid or expired refresh token" });
+      }
 
-    // Find the user associated with the refresh token
-    User.findOne({ id: decoded._id }, (err, user) => {
+      // Find the user associated with the refresh token
+      const user = await User.findById(decoded._id);
       if (err || !user) {
         return res.status(404).json({ message: "User not found" });
       }
 
-      // Generate token
-      const token = getToken({ _id: user._id });
-      const refreshToken = getRefreshToken({ _id: user._id });
+      const token = getToken({ _id: decoded._id });
+      const refreshToken = getRefreshToken({ _id: decoded._id });
 
       return res.status(200).json({
         access_token: token,
         refresh_token: refreshToken,
       });
-    });
-  });
+    }
+  );
 });
 
 router.post("/signup", (req, res, next) => {
