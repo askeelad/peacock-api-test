@@ -6,8 +6,8 @@ const morgan = require("morgan");
 const authRoutes = require("./routes/authRoutes");
 const subscriptionRoutes = require("./routes/subscriptionRoutes");
 const contentRoutes = require("./routes/contentRoutes");
-const userRoutes = require("./routes/userRoutes");
-const paymentRoutes = require("./routes/paymentRoutes");
+// const userRoutes = require("./routes/userRoutes");
+// const paymentRoutes = require("./routes/paymentRoutes");
 
 dotenv.config();
 
@@ -26,7 +26,9 @@ app.use(limiter);
 
 // Routes
 app.use("/api/auth", authRoutes);
-// app.use("/api/subscription", subscriptionRoutes);
-// app.use("/api/content", contentRoutes);
+app.use("/api/subscription", subscriptionRoutes);
+app.use("/api/content", contentRoutes);
 // app.use("/api/users", userRoutes);
 // app.use("/api/payment", paymentRoutes);
+
+module.exports = app;

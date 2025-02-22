@@ -4,10 +4,7 @@ const { log } = require("mercedlogger");
 
 const { DATABASE_URL } = process.env;
 
-mongoose.connect = mongoose.connect(DATABASE_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect = mongoose.connect(DATABASE_URL);
 
 mongoose.connection
   .on("open", () => log.green("DATABASE STATE", "Connection Open"))
