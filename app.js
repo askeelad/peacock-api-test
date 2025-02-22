@@ -26,7 +26,7 @@ app.use(limiter);
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/subscription", subscriptionRoutes);
-app.use("/api/content", contentRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/payment", paymentRoutes);
+// app.use("/api/subscription", subscriptionRoutes);
+// app.use("/api/content", contentRoutes);
+// app.use("/api/users", userRoutes);
+// app.use("/api/payment", paymentRoutes);
