@@ -7,7 +7,7 @@ const { verifyUser } = require("../tools/authenticate");
 
 const { EXTERNAL_API_URL } = process.env;
 
-router.get("/populateCategory", async (req, res, next) => {
+router.get("/populateCategory", verifyUser, async (req, res, next) => {
   const resData = await fetch(
     "https://dummyjson.com/products/categories?sortBy=name&order=asc"
   );
@@ -19,8 +19,7 @@ router.get("/populateCategory", async (req, res, next) => {
     );
 
     const sampleData = await sampleDataRes.json();
-    console.log(category.name);
-    console.log(sampleData);
+
     let Content = new ContentCategory({
       name: category.name,
       sampleArticles: sampleData?.products,
@@ -30,6 +29,54 @@ router.get("/populateCategory", async (req, res, next) => {
   });
 
   res.status(200).send({ message: "Categories with samples populated" });
+});
+
+router.get("/feed", verifyUser, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).populate(
+      "subscribedCategories"
+    );
+    const fetchData = async () => {
+      try {
+        let content = []; // Initialize empty content array
+
+        // Fetch all categories in parallel
+        const promises = user.subscribedCategories.map(async (cat) => {
+          const resData = await fetch(
+            `https://dummyjson.com/products/category/${cat.name}?sortBy=stock,rating&order=desc`
+          );
+
+          if (!resData.ok) throw new Error(`API Error: ${resData.status}`);
+
+          const contentByCat = await resData.json();
+          return contentByCat.products || []; // Return empty array if no products
+        });
+
+        // Wait for all fetch requests to complete
+        const results = await Promise.allSettled(promises);
+
+        // Extract successful results only
+        results.forEach((result) => {
+          if (result.status === "fulfilled") {
+            content = [...content, ...result.value]; // Append results
+          } else {
+            console.error("Fetch failed:", result.reason);
+          }
+        });
+
+        console.log("Final content:", content);
+        res.status(200).json({ content });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+      }
+    };
+
+    // Call the function
+    fetchData();
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching content", error });
+  }
 });
 
 module.exports = router;

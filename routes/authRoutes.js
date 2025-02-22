@@ -18,8 +18,6 @@ const User = require("../models/user");
 passport.use(
   new LocalStrategy(async function verify(username, password, cb) {
     const user = await User.findOne({ email: username });
-    console.log("user");
-    console.log(user);
     if (!user) {
       return cb(null, false, { message: "Incorrect username or password." });
     }
@@ -93,7 +91,6 @@ router.post(
   "/passport",
   passport.authenticate("local", { session: false }),
   (req, res, next) => {
-    console.log("auth done");
     const token = getToken({ _id: req.user._id });
     const refreshToken = getRefreshToken({ _id: req.user._id });
     User.findById(req.user._id)
@@ -158,7 +155,6 @@ router.post("/signup", (req, res, next) => {
       if (err) {
         return next(err);
       }
-      console.log(req.body);
       let user = new User({
         name: req.body.name,
         password: hashedPassword,
