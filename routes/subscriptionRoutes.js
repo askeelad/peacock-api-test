@@ -4,6 +4,7 @@ const User = require("../models/user");
 const ContentCategory = require("../models/content");
 
 const { verifyUser } = require("../tools/authenticate");
+const { sendSubscriptionEmail } = require("../tools/emailService");
 
 router.post("/subscribe/:id", verifyUser, async (req, res, next) => {
   const isCategoryValid = await ContentCategory.findById(req.params.id);
@@ -15,6 +16,12 @@ router.post("/subscribe/:id", verifyUser, async (req, res, next) => {
 
   try {
     await user.save();
+    // Send confirmation email
+    await sendSubscriptionEmail(
+      req.user.email,
+      req.user.name,
+      isCategoryValid.name
+    );
   } catch (error) {
     res.status(500).send({ message: "database error" });
   }
