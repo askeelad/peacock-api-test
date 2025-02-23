@@ -71,7 +71,7 @@ Replace `your_secret_key`, `your_price_id`, and `your_webhook_secret` with value
 
 ## 🚦 Special instructions
 
----
+---Setup your email app password using gmail to use nodemailer
 
 ## 🚦 Running the Server
 
