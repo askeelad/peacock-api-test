@@ -64,7 +64,6 @@ router.get("/feed", verifyUser, async (req, res) => {
           }
         });
 
-        console.log("Final content:", content);
         res.status(200).json({ content });
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -85,7 +84,7 @@ router.get(
   checkPremium,
   async (req, res, next) => {
     const resData = await fetch(
-      "https://dummyjson.com/products/categories?sortBy=name&order=asc"
+      "https://newsapi.org/v2/everything?q=bitcoin&apiKey=77c62c5071fa4f538f044ffb53bd3267"
     );
     const content = await resData.json();
 
