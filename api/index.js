@@ -18,7 +18,6 @@ app.use("/webhook", express.raw({ type: "application/json" }), webhookRoutes);
 app.use(express.json());
 app.use(cors());
 app.use(morgan("dev"));
-app.use(express.static("public"));
 
 // Rate Limiting
 const limiter = rateLimit({
@@ -34,8 +33,5 @@ app.use("/api/subscription", subscriptionRoutes);
 app.use("/api/content", contentRoutes);
 // app.use("/api/users", userRoutes);
 app.use("/api/payment", paymentRoutes);
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "index.html"));
-});
 
 module.exports = app;
