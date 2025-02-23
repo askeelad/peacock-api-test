@@ -1,4 +1,4 @@
-let app = require("..");
+let app = require("../app");
 let http = require("http");
 
 /**
