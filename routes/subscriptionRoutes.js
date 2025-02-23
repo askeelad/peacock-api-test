@@ -39,7 +39,7 @@ router.post("/unsubscribe/:id", verifyUser, async (req, res, next) => {
     return res.status(400).send({ message: "category is not a valid one" });
 
   const newSubscribedCategories = user.subscribedCategories.filter(
-    (cat) => cat === req.params.id
+    (cat) => cat !== req.params.id
   );
   user.subscribedCategories = newSubscribedCategories;
   try {

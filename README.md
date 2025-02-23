@@ -1,6 +1,6 @@
 # Stripe Subscription Payment API
 
-This project is an Express.js API that integrates **Stripe Checkout** for subscription payments. It supports webhook handling for post-payment processing and uses JWT authentication with refresh token. It also fetches normal data from dummyjson and premium data from NewsAPI
+This project is an Express.js API that integrates **Stripe Checkout** for subscription payments. It supports webhook handling for post-payment processing and uses JWT authentication with refresh token. It also fetches normal data from dummyjson and premium data from NewsAPI. System will send weekly recommendation email to users.
 
 ## 🚀 Features
 
