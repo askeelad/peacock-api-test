@@ -3,15 +3,15 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 const morgan = require("morgan");
-const authRoutes = require("./routes/authRoutes");
-const subscriptionRoutes = require("./routes/subscriptionRoutes");
-const contentRoutes = require("./routes/contentRoutes");
+const authRoutes = require("../routes/authRoutes");
+const subscriptionRoutes = require("../routes/subscriptionRoutes");
+const contentRoutes = require("../routes/contentRoutes");
 // const userRoutes = require("./routes/userRoutes");
-const paymentRoutes = require("./routes/paymentRoutes");
-const webhookRoutes = require("./routes/webhook");
-const User = require("./models/user");
+const paymentRoutes = require("../routes/paymentRoutes");
+const webhookRoutes = require("../routes/webhook");
+const User = require("../models/user");
 let cron = require("node-cron");
-const { sendRecommendationEmail } = require("./tools/recommendationEmail");
+const { sendRecommendationEmail } = require("../tools/recommendationEmail");
 
 dotenv.config();
 
