@@ -1,15 +1,24 @@
 # Stripe Subscription Payment API
 
-This project is an Express.js API that integrates **Stripe Checkout** for subscription payments. It supports webhook handling for post-payment processing.
+This project is an Express.js API that integrates **Stripe Checkout** for subscription payments. It supports webhook handling for post-payment processing and uses JWT authentication with refresh token. It also fetches normal data from dummyjson and premium data from NewsAPI
 
 ## 🚀 Features
+
+- Sign Up and login using passportJS.
+- Handle authentication using jwt.
+
+- Subscribe and Unsubscribe to category
+- Retrieve content based on user's subscribed category
+- Access to premium content
+
+- Use **Stripe CLI** to test webhooks locally.
 - Create Stripe Checkout Sessions for subscription payments.
 - Handle Stripe webhooks to process payment events.
-- Use **Stripe CLI** to test webhooks locally.
 
 ---
 
 ## 📌 Prerequisites
+
 Make sure you have the following installed:
 
 - **Node.js** (v14+ recommended)
@@ -22,12 +31,13 @@ Make sure you have the following installed:
 ## 🛠️ Installation
 
 1️⃣ **Clone the repository**
+
 ```sh
-git clone https://github.com/your-repo/stripe-subscription-api.git
-cd stripe-subscription-api
+git clone https://github.com/askeelad/peacock-api-test.git
 ```
 
 2️⃣ **Install dependencies**
+
 ```sh
 npm install
 # or
@@ -38,144 +48,69 @@ yarn install
 Create a `.env` file in the root directory and add:
 
 ```env
-STRIPE_SECRET_KEY=sk_test_your_secret_key
-STRIPE_PRICE_ID=price_your_price_id
-CLIENT_URL=http://localhost:3000
-STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
+DATABASE_URL=""
+JWT_SECRET=asgkaq-asdpoinmmaos-aspgz-dahq
+REFRESH_TOKEN_SECRET=sdfoasdsdfhkjkjdsfnmyxv-asdasidgj
+SESSION_EXPIRY=60*20
+JWT_EXPIRY=60*20
+REFRESH_TOKEN_EXPIRY=60*60
+COOKIE_SECRET=jhdshhds884hfhhs-ew6dhjd
+EXTERNAL_API_URL=https://dummyjson.com
+EMAIL_USER=""
+EMAIL_PASS=""
+STRIPE_SECRET_KEY=""
+STRIPE_PUBLISHABLE_KEY=""
+STRIPE_PRICE_ID=""
+STRIPE_WEBHOOK_SECRET=""
+CLIENT_URL=https://dummyjson.com
 ```
 
 Replace `your_secret_key`, `your_price_id`, and `your_webhook_secret` with values from your **Stripe Dashboard**.
 
 ---
 
+## 🚦 Special instructions
+
+---
+
 ## 🚦 Running the Server
+
 Start the Express server:
+
 ```sh
-npm run dev  # If using nodemon
-# or
-node app.js
+npm run dev
 ```
 
 By default, the server runs on **http://localhost:3000**.
 
----
-
-## 💳 Creating a Checkout Session
-**Endpoint:** `POST /api/payment/premium`
-
-This creates a Stripe Checkout Session for a subscription payment.
-
-```sh
-curl -X POST http://localhost:3000/api/payment/premium \
-     -H "Content-Type: application/json" \
-     -d '{}'
-```
-
-✅ **Response:**
-```json
-{
-  "sessionId": "cs_test_123456789"
-}
-```
-
-Redirect the user to:
-```
-https://checkout.stripe.com/pay/cs_test_123456789
-```
-
----
-
 ## 🔔 Handling Stripe Webhooks
+
 Stripe sends **webhook events** when payments succeed or fail.
 
-**Webhook URL:** `POST /webhook`
+**Webhook URL:** `localhost:3000/webhook/webhook`
+** run stripe trigger checkout.session.completed to mock webhook event**
 
-### 📌 Webhook Setup in Express
-Modify `routes/webhook.js`:
-```javascript
-const express = require("express");
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
-const router = express.Router();
-const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+### 📌 API Endpoints
 
-router.post("/", express.raw({ type: "application/json" }), (req, res) => {
-  const sig = req.headers["stripe-signature"];
-
-  let event;
-  try {
-    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-  } catch (err) {
-    console.error("Webhook Error:", err.message);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
-  }
-
-  console.log("✅ Webhook Event Received:", event.type);
-
-  if (event.type === "checkout.session.completed") {
-    console.log("🎉 Payment successful!", event.data.object);
-  }
-
-  res.json({ received: true });
-});
-
-module.exports = router;
-```
-
----
-
-## 🛠️ Testing Webhooks Locally
-Since Stripe cannot reach `localhost`, use **Stripe CLI** to forward webhooks.
-
-### 🔹 **Start Webhook Listener**
-Run:
-```sh
-stripe listen --forward-to http://localhost:3000/webhook
-```
-This listens for Stripe events and forwards them to your local webhook.
-
-### 🔹 **Trigger a Test Event**
-```sh
-stripe trigger checkout.session.completed
-```
-If everything is working, your webhook should log:
-```
-✅ Webhook Event Received: checkout.session.completed
-🎉 Payment successful!
-```
-
----
-
-## 🚀 Deploying to Production
-1. Deploy your **Express API** to a public server (e.g., **Vercel, Render, Heroku**).
-2. Set up **live** Stripe API keys.
-3. Configure webhooks in the **Stripe Dashboard**:
-   - Go to **Developers → Webhooks**
-   - Click **"Add Endpoint"**
-   - Enter your **public URL** (e.g., `https://yourdomain.com/webhook`)
-   - Select the events to listen for (e.g., `checkout.session.completed`)
-   - Save the webhook.
-
----
-
-## ❓ Troubleshooting
-
-**1️⃣ Getting `Webhook Error: No signatures found`?**  
-➡️ Ensure `express.raw({ type: "application/json" })` is used **before** `express.json()`.  
-➡️ Restart the server after making changes.
-
-**2️⃣ Webhooks are not reaching localhost?**  
-➡️ Run `stripe listen --forward-to http://localhost:3000/webhook`.
-
-**3️⃣ Checkout session not creating?**  
-➡️ Check if `STRIPE_SECRET_KEY` and `STRIPE_PRICE_ID` are set correctly.
+--localhost:3000/api/auth/signup(post) -- to sign up
+--localhost:3000/api/auth/passport(post) --to login
+--localhost:3000/api/auth/refreshtoken(get) --get token
+--localhost:3000/api/subscription/unsubscribe/:id(post)(jwt) -- unsubscribe a category
+--localhost:3000/api/subscription/subscribe/:id(post)(jwt) --sunbscribe to a category
+--localhost:3000/api/content/feed(get)(jwt) --get content
+--localhost:3000/api/content/premiumContent(get)(jwt) --get premium content
+--localhost:3000/api/payment/premium(post)(jwt) --initiate payment
+if you run it on locally make a req to this api to populate category data from dummyjson. Do it once only.
+--localhost:3000/api/content/populateCategory
 
 ---
 
 ## 👨‍💻 Author
-Created by [Your Name](https://github.com/your-github).
+
+Created by KB.
 
 ---
 
 ## 📜 License
-This project is licensed under the MIT License.
 
+This project is licensed under the MIT License.
