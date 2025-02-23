@@ -7,11 +7,15 @@ const authRoutes = require("./routes/authRoutes");
 const subscriptionRoutes = require("./routes/subscriptionRoutes");
 const contentRoutes = require("./routes/contentRoutes");
 // const userRoutes = require("./routes/userRoutes");
-// const paymentRoutes = require("./routes/paymentRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
+const webhookRoutes = require("./routes/webhook");
 
 dotenv.config();
 
 const app = express();
+
+app.use("/webhook", express.raw({ type: "application/json" }), webhookRoutes);
+
 app.use(express.json());
 app.use(cors());
 app.use(morgan("dev"));
@@ -29,6 +33,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/subscription", subscriptionRoutes);
 app.use("/api/content", contentRoutes);
 // app.use("/api/users", userRoutes);
-// app.use("/api/payment", paymentRoutes);
+app.use("/api/payment", paymentRoutes);
 
 module.exports = app;
