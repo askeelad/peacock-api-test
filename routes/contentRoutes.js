@@ -3,7 +3,7 @@ let router = express.Router();
 const User = require("../models/user");
 const ContentCategory = require("../models/content");
 
-const { verifyUser } = require("../tools/authenticate");
+const { verifyUser, checkPremium } = require("../tools/authenticate");
 
 const { EXTERNAL_API_URL } = process.env;
 
@@ -79,4 +79,17 @@ router.get("/feed", verifyUser, async (req, res) => {
   }
 });
 
+router.get(
+  "/premiumContent",
+  verifyUser,
+  checkPremium,
+  async (req, res, next) => {
+    const resData = await fetch(
+      "https://dummyjson.com/products/categories?sortBy=name&order=asc"
+    );
+    const content = await resData.json();
+
+    res.status(200).json({ content });
+  }
+);
 module.exports = router;
